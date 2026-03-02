@@ -11,16 +11,37 @@ from app.config import settings
 # access to the values within the .ini file in use.
 config = context.config
 
-db_url = (
-    "postgresql+psycopg://"
-    f"{settings.database_username}:"
-    f"{settings.database_password}@"
-    f"{settings.database_hostname}:"
-    f"{settings.database_port}/"
-    f"{settings.database_name}"
-)
+# db_url = (
+#     "postgresql+psycopg://"
+#     f"{settings.database_username}:"
+#     f"{settings.database_password}@"
+#     f"{settings.database_hostname}:"
+#     f"{settings.database_port}/"
+#     f"{settings.database_name}"
+# )
 
-config.set_main_option("sqlalchemy.url", db_url)
+# config.set_main_option("sqlalchemy.url", db_url)
+
+DATABASE_URL = settings.DATABASE_URL
+
+if DATABASE_URL is None:
+    DATABASE_URL = (
+        "postgresql+psycopg://"
+        f"{settings.database_username}:"
+        f"{settings.database_password}@"
+        f"{settings.database_hostname}:"
+        f"{settings.database_port}/"
+        f"{settings.database_name}"
+    )
+
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgresql://",
+        "postgresql+psycopg://",
+        1
+    )
+
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
